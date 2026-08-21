@@ -134,6 +134,7 @@ Upload a short WAV/MP3 via Swagger (`/docs`) or:
 
 ```bash
 curl -X POST http://localhost:3000/v1/transcriptions \
+  -H "Idempotency-Key: $(uuidgen)" \
   -F "file=@./samples/sample.wav"
 
 curl http://localhost:3000/v1/transcriptions/<id>
@@ -153,6 +154,7 @@ curl http://localhost:3000/health
 
 ```bash
 curl -X POST http://localhost:3000/v1/transcriptions \
+  -H "Idempotency-Key: $(uuidgen)" \
   -F "file=@./samples/sample.wav"
 ```
 
@@ -160,7 +162,7 @@ curl -X POST http://localhost:3000/v1/transcriptions \
 { "id": "...", "status": "QUEUED" }
 ```
 
-Optional header: `Idempotency-Key` (returns the existing job when reused).
+Required header: `Idempotency-Key` (UUID v4). Reusing the same key returns the existing job.
 
 ### Poll transcription
 
@@ -243,7 +245,7 @@ TRANSCRIPTION_RETRY_BASE_DELAY_MS=500
 
 Chunk transcription is isolated so successful chunks need not be re-run if chunk-level recovery is extended later.
 
-Idempotency for client retries is supported via optional `Idempotency-Key`. Production systems may also use upload hashes or uniqueness constraints.
+Idempotency for client retries is required via `Idempotency-Key` (UUID v4). Production systems may also use upload hashes or uniqueness constraints.
 
 ## Storage
 

@@ -69,6 +69,7 @@ describe('CreateTranscriptionUseCase', () => {
       size: 128,
       path: '/tmp/fake-upload.wav',
       stream: Readable.from([]),
+      idempotencyKey: '550e8400-e29b-41d4-a716-446655440000',
     });
 
     expect(result.status).toBe(TranscriptionStatus.QUEUED);
@@ -91,6 +92,7 @@ describe('CreateTranscriptionUseCase', () => {
         mimeType: 'audio/wav',
         size: 0,
         stream: Readable.from([]),
+        idempotencyKey: '550e8400-e29b-41d4-a716-446655440001',
       }),
     ).rejects.toBeInstanceOf(ValidationAppError);
   });

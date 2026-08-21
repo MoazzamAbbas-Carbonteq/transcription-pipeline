@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { execFileSync } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { AppModule } from '../src/app.module';
@@ -70,7 +71,25 @@ describe('Transcription API (e2e)', () => {
   });
 
   it('rejects missing file uploads', async () => {
-    await request(app.getHttpServer()).post('/v1/transcriptions').expect(400);
+    await request(app.getHttpServer())
+      .post('/v1/transcriptions')
+      .set('Idempotency-Key', randomUUID())
+      .expect(400);
+  });
+
+  it('rejects missing Idempotency-Key', async () => {
+    await request(app.getHttpServer())
+      .post('/v1/transcriptions')
+      .attach('file', samplePath)
+      .expect(400);
+  });
+
+  it('rejects invalid Idempotency-Key', async () => {
+    await request(app.getHttpServer())
+      .post('/v1/transcriptions')
+      .set('Idempotency-Key', 'not-a-uuid')
+      .attach('file', samplePath)
+      .expect(400);
   });
 
   it('rejects unsupported/corrupt media', async () => {
@@ -79,6 +98,7 @@ describe('Transcription API (e2e)', () => {
 
     await request(app.getHttpServer())
       .post('/v1/transcriptions')
+      .set('Idempotency-Key', randomUUID())
       .attach('file', corruptPath, 'corrupt.txt')
       .expect((res) => {
         expect([400, 415, 422]).toContain(res.status);
@@ -92,6 +112,7 @@ describe('Transcription API (e2e)', () => {
 
     await request(app.getHttpServer())
       .post('/v1/transcriptions')
+      .set('Idempotency-Key', randomUUID())
       .attach('file', bigPath, 'oversized.wav')
       .expect(413);
   });
@@ -102,9 +123,16 @@ describe('Transcription API (e2e)', () => {
       .expect(404);
   });
 
+  it('rejects invalid job id format', async () => {
+    await request(app.getHttpServer())
+      .get('/v1/transcriptions/not-a-uuid')
+      .expect(400);
+  });
+
   it('uploads audio, processes asynchronously, and returns timestamped segments', async () => {
     const createResponse = await request(app.getHttpServer())
       .post('/v1/transcriptions')
+      .set('Idempotency-Key', randomUUID())
       .attach('file', samplePath)
       .expect(202);
 

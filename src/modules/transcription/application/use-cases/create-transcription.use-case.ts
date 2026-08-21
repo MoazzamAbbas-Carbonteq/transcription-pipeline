@@ -32,7 +32,7 @@ export interface CreateTranscriptionCommand {
   size: number;
   stream: Readable;
   path?: string;
-  idempotencyKey?: string;
+  idempotencyKey: string;
 }
 
 @Injectable()
@@ -71,13 +71,11 @@ export class CreateTranscriptionUseCase {
       );
     }
 
-    if (command.idempotencyKey) {
-      const existing = await this.repository.findByIdempotencyKey(
-        command.idempotencyKey,
-      );
-      if (existing) {
-        return { id: existing.id, status: existing.status };
-      }
+    const existing = await this.repository.findByIdempotencyKey(
+      command.idempotencyKey,
+    );
+    if (existing) {
+      return { id: existing.id, status: existing.status };
     }
 
     const id = randomUUID();
