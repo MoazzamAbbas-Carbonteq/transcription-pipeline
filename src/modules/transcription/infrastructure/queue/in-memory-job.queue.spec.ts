@@ -1,11 +1,12 @@
 import { ConfigService } from '@nestjs/config';
+import { AppConfig } from '../../../../config/configuration';
 import { InMemoryJobQueue } from './in-memory-job.queue';
 
 describe('InMemoryJobQueue', () => {
   it('bounds concurrent processing', async () => {
     const configService = {
       get: () => 2,
-    } as unknown as ConfigService;
+    } as unknown as ConfigService<AppConfig, true>;
 
     const queue = new InMemoryJobQueue(configService);
     let active = 0;

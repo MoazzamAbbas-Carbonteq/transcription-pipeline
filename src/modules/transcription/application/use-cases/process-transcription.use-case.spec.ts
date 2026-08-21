@@ -3,6 +3,7 @@ import {
   PermanentProviderError,
   TransientProviderError,
 } from '../../../../common/errors/app.errors';
+import { AppConfig } from '../../../../config/configuration';
 import { AudioProcessorPort } from '../../domain/ports/audio-processor.port';
 import { TranscriptionProviderPort } from '../../domain/ports/transcription-provider.port';
 import { TranscriptionRepositoryPort } from '../../domain/ports/transcription-repository.port';
@@ -33,7 +34,7 @@ describe('ProcessTranscriptionUseCase', () => {
       };
       return values[key];
     },
-  } as unknown as ConfigService;
+  } as unknown as ConfigService<AppConfig, true>;
 
   function build(
     provider: TranscriptionProviderPort,

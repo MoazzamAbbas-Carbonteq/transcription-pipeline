@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { promises as fs } from 'node:fs';
 import { Readable } from 'node:stream';
 import { ValidationAppError } from '../../../../common/errors/app.errors';
+import { AppConfig } from '../../../../config/configuration';
 import { AudioProcessorPort } from '../../domain/ports/audio-processor.port';
 import { JobQueuePort } from '../../domain/ports/job-queue.port';
 import { TranscriptionRepositoryPort } from '../../domain/ports/transcription-repository.port';
@@ -44,7 +45,7 @@ describe('CreateTranscriptionUseCase', () => {
       if (key === 'maxUploadSizeMb') return 25;
       return undefined;
     },
-  } as unknown as ConfigService;
+  } as unknown as ConfigService<AppConfig, true>;
 
   beforeEach(() => {
     jest.clearAllMocks();

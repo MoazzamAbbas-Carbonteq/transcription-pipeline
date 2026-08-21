@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { AppConfig } from '../../../../config/configuration';
 import { GroqTranscriptionProvider } from './groq-transcription.provider';
 
 describe('GroqTranscriptionProvider mapping', () => {
@@ -8,7 +9,7 @@ describe('GroqTranscriptionProvider mapping', () => {
       if (key === 'transcriptionModel') return 'whisper-large-v3-turbo';
       return undefined;
     },
-  } as unknown as ConfigService;
+  } as unknown as ConfigService<AppConfig, true>;
 
   it('maps Groq-like payloads to application-owned types only', () => {
     const provider = new GroqTranscriptionProvider(configService);

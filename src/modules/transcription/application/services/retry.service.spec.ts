@@ -3,6 +3,7 @@ import {
   PermanentProviderError,
   TransientProviderError,
 } from '../../../../common/errors/app.errors';
+import { AppConfig } from '../../../../config/configuration';
 import { RetryService } from './retry.service';
 
 describe('RetryService', () => {
@@ -12,7 +13,7 @@ describe('RetryService', () => {
       if (key === 'transcriptionRetryBaseDelayMs') return 1;
       return undefined;
     },
-  } as unknown as ConfigService;
+  } as unknown as ConfigService<AppConfig, true>;
 
   it('retries transient failures then succeeds', async () => {
     const service = new RetryService(configService);
