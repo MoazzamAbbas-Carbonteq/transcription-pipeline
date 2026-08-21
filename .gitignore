@@ -9,20 +9,10 @@ coverage/
 .env.local
 .env.*.local
 
-# Temporary audio / processing artifacts
+# Temporary audio / processing artifacts (not sample fixtures)
 tmp/
 temp/
 /tmp/transcription/
-samples/*.wav
-samples/*.mp3
-samples/*.m4a
-samples/*.flac
-samples/*.ogg
-samples/*.webm
-
-# Keep the generator and docs
-!samples/.gitkeep
-!scripts/
 
 # Logs and OS/editor junk
 logs/
